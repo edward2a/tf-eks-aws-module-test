@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-3
+  labels:
+    app: ngx3
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: ngx3
+  template:
+    metadata:
+      labels:
+        app: ngx
+    spec:
+      containers:
+      - name: ngx3
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+#      affinity:
+#        podAntiAffinity:
+#          preferredDuringSchedulingIgnoredDuringExecution:
+#          - podAffinityTerm:
+#              labelSelector:
+#                matchExpressions:
+#                - key: app
+#                  operator: NotIn
+#                  values:
+#                  - ngx3
+#              topologyKey: failure-domain.beta.kubernetes.io/zone
+#            weight: 100

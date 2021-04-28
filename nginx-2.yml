@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-2
+  labels:
+    app: http-ngx
+spec:
+  replicas: 24
+  selector:
+    matchLabels:
+      app: http-ngx
+  template:
+    metadata:
+      labels:
+        app: http-ngx
+    spec:
+      containers:
+      - name: http-ngx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80

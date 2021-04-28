@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-1
+  labels:
+    app: nginx
+spec:
+  replicas: 9
+  selector:
+    matchLabels:
+      app: nginx
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: NotIn
+                  values:
+                  - nginx
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+#          - podAffinityTerm:
+#              labelSelector:
+#                matchExpressions:
+#                - key: app
+#                  operator: NotIn
+#                  values:
+#                  - nginx
+#              topologyKey: failure-domain.beta.kubernetes.io/zone
+#            weight: 100
+
+        # single deployment per AZ
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#          - labelSelector:
+#              matchExpressions:
+#              - key: app
+#                operator: In
+#                values:
+#                - nginx
+#            topologyKey: failure-domain.beta.kubernetes.io/zone
+
+
+        # single deployment per node
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#          - labelSelector:
+#              matchExpressions:
+#              - key: app
+#                operator: In
+#                values:
+#                - nginx
+#            topologyKey: kubernetes.io/hostname
